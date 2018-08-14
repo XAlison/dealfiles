@@ -28,13 +28,11 @@ public class ZipFile {
      */
     public static void bulkPackedFiles(String zipFileName, Map<String, String> urlsMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String fileName = zipFileName + ".zip";
-        //在服务器端创建打包下载的临时文件
-        String relativePath = "tmp/";        //保存视频及截图的目录
-        String realPath = request.getSession().getServletContext().getRealPath("/");    //web项目部署的实际物理地址E:/tomcat/webapps/em/
-        String directory = realPath + relativePath;                        //视频上传web临时文件夹
+        String relativePath = "tmp/";
+        String realPath = request.getSession().getServletContext().getRealPath("/");
+        String directory = realPath + relativePath;
 
-        String outFilePath = directory + fileName;    //将打包文件输出到服务器临时目录下，待用户下载完成后删除
-        System.out.println("输出路径：" + outFilePath);
+        String outFilePath = directory + fileName;
 
         File file = new File(outFilePath);
         //文件输出流
@@ -46,26 +44,6 @@ public class ZipFile {
         toClient.close();
         outStream.close();
         downloadZip(file, response);
-    }
-
-    public static void bulkPackedFilesByStream(String zipFileName, Map<String, String> urlsMap) throws Exception {
-        String fileName = zipFileName + ".zip";
-        //在服务器端创建打包下载的临时文件
-        String directory = "d://";                        //视频上传web临时文件夹
-
-        String outFilePath = directory + fileName;    //将打包文件输出到服务器临时目录下，待用户下载完成后删除
-        System.out.println("输出路径：" + outFilePath);
-
-        File file = new File(outFilePath);
-        //文件输出流
-        FileOutputStream outStream = new FileOutputStream(file);
-        //压缩流
-        ZipOutputStream toClient = new ZipOutputStream(outStream);
-        toClient.setEncoding("UTF-8");
-        zipBatchFileByStream(urlsMap, toClient);
-        toClient.close();
-        outStream.close();
-        //downloadZip(file, response);
     }
 
     /**
@@ -123,7 +101,7 @@ public class ZipFile {
     }
 
     /**
-     * @Description: 下载导报文件
+     * @Description: 下载文件
      * @Author: xiewl
      * @param:
      * @Date: 2018/7/27 13:39
@@ -144,7 +122,7 @@ public class ZipFile {
             toClient.write(buffer);
             toClient.flush();
             toClient.close();
-            file.delete();        //将生成的服务器端文件删除
+            file.delete();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
