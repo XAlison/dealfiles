@@ -115,7 +115,6 @@ public class ZipFile {
             fis.close();
             // 清空response
             response.reset();
-
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
             response.setContentType("application/octet-stream");
             response.setHeader("Content-Disposition", "attachment;filename=" + file.getName());

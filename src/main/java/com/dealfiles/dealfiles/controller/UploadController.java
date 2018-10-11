@@ -1,5 +1,7 @@
 package com.dealfiles.dealfiles.controller;
 
+import com.dealfiles.dealfiles.bean.FileEntity;
+import com.dealfiles.dealfiles.utils.FileUploadTool;
 import com.dealfiles.dealfiles.utils.ZipFile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +27,7 @@ public class UploadController {
             for (String file_name : list) {
                 //签到图片文件名：用户名+考勤时间+序号
                 String userName = file_name.substring(0, file_name.lastIndexOf("."));
-                String rootUrl ="static/files/".concat(file_name);
+                String rootUrl = "static/files/".concat(file_name);
                 urlsMap.put(userName, rootUrl);
                 photoCount++;
             }
@@ -35,7 +37,7 @@ public class UploadController {
     }
 
     //处理文件上传
-    @RequestMapping(value="/testuploadimg", method = RequestMethod.POST)
+    @RequestMapping(value = "/testuploadimg", method = RequestMethod.POST)
     public @ResponseBody
     String uploadImg(@RequestParam("file") MultipartFile file,
                      HttpServletRequest request) {
@@ -43,7 +45,7 @@ public class UploadController {
         String fileName = file.getOriginalFilename();
         /*System.out.println("fileName-->" + fileName);
         System.out.println("getContentType-->" + contentType);*/
-        String filePath ="static/files/";
+        String filePath = "static/files/";
         try {
             uploadFile(file.getBytes(), filePath, fileName);
         } catch (Exception e) {
@@ -52,14 +54,39 @@ public class UploadController {
         //返回json
         return "uploadimg success";
     }
+
     public static void uploadFile(byte[] file, String filePath, String fileName) throws Exception {
         File targetFile = new File(filePath);
-        if(!targetFile.exists()){
+        if (!targetFile.exists()) {
             targetFile.mkdirs();
         }
-        FileOutputStream out = new FileOutputStream(filePath+fileName);
+        FileOutputStream out = new FileOutputStream(filePath + fileName);
         out.write(file);
         out.flush();
         out.close();
+    }
+
+
+    @RequestMapping(value = "/upload", method = {RequestMethod.POST, RequestMethod.GET})
+    public @ResponseBody
+    String upload(@RequestParam("file") MultipartFile multipartFile,
+                  HttpServletRequest request) {
+        String message = "";
+        FileEntity entity;
+        FileUploadTool fileUploadTool = new FileUploadTool();
+        try {
+            entity = fileUploadTool.createFile(multipartFile, request);
+            if (entity != null) {
+//                service.saveFile(entity);
+                message = "上传成功";
+
+            } else {
+                message = "上传失败";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+
     }
 }
